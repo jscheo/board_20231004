@@ -4,8 +4,10 @@ import com.example.board.dto.BoardDTO;
 import com.example.board.entity.BoardEntity;
 import com.example.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,7 +24,8 @@ public class BoardService {
     }
 
     public List<BoardDTO> findAll() {
-        List<BoardEntity> boardEntityList = boardRepository.findAll();
+        // findall 호출 시 정렬 하려는 조건을 설정해줄 수 있음
+        List<BoardEntity> boardEntityList = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         List<BoardDTO> boardDTOList = new ArrayList<>();
         boardEntityList.forEach(board -> {
             boardDTOList.add(BoardDTO.toSaveDTO(board));
@@ -35,6 +38,17 @@ public class BoardService {
 //        }
         return boardDTOList;
     }
+    //조회수
+
+    /**
+     * 서비스 클래스 매서드에서 @Transactional 붙이는 경우
+     * 1. jqpl 로 작성한 매서드 호출할 때
+     * 2. 부모엔티티에서 자식엔티티를 바로 호출할 때
+     */
+    @Transactional
+    public void increaseHits(Long id) {
+        boardRepository.increaseHits(id);
+    }
 
     public BoardDTO findById(Long id) {
         BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
@@ -44,4 +58,6 @@ public class BoardService {
     public void deleteById(Long id) {
         boardRepository.deleteById(id);
     }
+
+
 }
