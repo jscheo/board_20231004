@@ -13,6 +13,8 @@
             <th>제목</th>
             <th>내용</th>
             <th>조회수</th>
+            <th>수정</th>
+            <th>삭제</th>
         </tr>
         <tr>
             <td th:text="${board.id}"></td>
@@ -20,7 +22,22 @@
             <td th:text="${board.boardTitle}"></td>
             <td th:text="${board.boardContents}"></td>
             <td th:text="${board.boardHits}"></td>
+            <td>
+                <button th:onclick="update_fn([[${board.id}]])">수정</button>
+            </td>
+            <td>
+                <button th:onclick="delete_fn([[${board.id}]])">삭제</button>
+            </td>
         </tr>
     </table>
 </body>
+<script>
+    const update_fn = (id) =>{
+        location.href=`/board/update/${id}`;
+    }
+
+    const delete_fn = (id) =>{
+        location.href=`/board/delete/${id}`;
+    }
+</script>
 </html>

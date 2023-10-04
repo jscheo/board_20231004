@@ -35,4 +35,8 @@ public class BoardService {
         BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
         return BoardDTO.toSaveDTO(boardEntity);
     }
+
+    public void deleteById(Long id) {
+        boardRepository.deleteById(id);
+    }
 }
