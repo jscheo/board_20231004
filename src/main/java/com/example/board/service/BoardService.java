@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +29,10 @@ public class BoardService {
             boardDTOList.add(boardDTO);
         }
         return boardDTOList;
+    }
+
+    public BoardDTO findById(Long id) {
+        BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+        return BoardDTO.toSaveDTO(boardEntity);
     }
 }
