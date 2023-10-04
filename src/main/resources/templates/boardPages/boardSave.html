@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>글작성</h2>
+<form action="/board/save" method="post">
+    <input type="text" name="boardWriter" placeholder="작성자"><br>
+    <input type="text" name="boardTitle" placeholder="글제목"><br>
+    <input type="text" name="boardPass" placeholder="비밀번호"><br>
+    <textarea name="boardContents" cols="30" rows="10"></textarea><br>
+    <input type="submit" value="글 등록">
+</form>
+</body>
+</html>
