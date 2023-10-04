@@ -16,18 +16,23 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    public void save(BoardDTO boardDTO) {
+    public Long save(BoardDTO boardDTO) {
         BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
-        boardRepository.save(boardEntity);
+        return boardRepository.save(boardEntity).getId();
     }
 
     public List<BoardDTO> findAll() {
         List<BoardEntity> boardEntityList = boardRepository.findAll();
         List<BoardDTO> boardDTOList = new ArrayList<>();
-        for(BoardEntity boardEntity : boardEntityList){
-            BoardDTO boardDTO = BoardDTO.toSaveDTO(boardEntity);
-            boardDTOList.add(boardDTO);
-        }
+        boardEntityList.forEach(board -> {
+            boardDTOList.add(BoardDTO.toSaveDTO(board));
+        });
+        // 괄호가 여러개있을때 괄호에 많이 쌓여져있는 부분부터 실행된다.
+
+//        for(BoardEntity boardEntity : boardEntityList){
+//            BoardDTO boardDTO = BoardDTO.toSaveDTO(boardEntity);
+//            boardDTOList.add(boardDTO);
+//        }
         return boardDTOList;
     }
 

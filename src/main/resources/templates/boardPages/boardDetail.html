@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="container mt-5 mb-5">
 <h2>상세조회</h2>
     <table>
         <tr>
@@ -28,12 +31,29 @@
             <td>
                 <button th:onclick="delete_fn([[${board.id}]])">삭제</button>
             </td>
+            <td>
+                <input type="hidden" id="pass-check" style="display: none;">
+            </td>
         </tr>
     </table>
+</div>
+<div th:replace="~{component/footer :: footer}"></div>
 </body>
-<script>
+<script th:inline="javascript">
     const update_fn = (id) =>{
-        location.href=`/board/update/${id}`;
+        const boardPass = [[${board.boardPass}]];
+        const inputPass = document.getElementById("pass-check").value;
+        if(inputPass.style.display == "none"){
+            inputPass.style.display = "block";
+            if(inputPass== boardPass){
+                location.href=`/board/update/${id}`;
+            }else{
+                alert("비밀번호가 틀립니다.")
+            }
+        }else{
+            inputPass.style.display="none";
+        }
+
     }
 
     const delete_fn = (id) =>{

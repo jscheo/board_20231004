@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
 
+<div class="container mt-5 mb-5">
+<h2>글 수정</h2>
+<form action="/board/update" method="post">
+    <input type="hidden" name="id" th:value="${board.id}">
+    <input type="text" name="boardWriter" th:value="${board.boardWriter}" placeholder="작성자"><br>
+    <input type="text" name="boardTitle" th:value="${board.boardTitle}" placeholder="글제목"><br>
+    <input type="text" name="boardPass" placeholder="비밀번호"><br>
+    <textarea name="boardContents" cols="30" rows="10" th:value="${board.boardContents}" th:text="${board.boardContents}"></textarea><br>
+    <input type="submit" value="글 수정">
+</form>
+</div>
+<div th:replace="~{component/footer :: footer}"></div>
 </body>
 </html>
