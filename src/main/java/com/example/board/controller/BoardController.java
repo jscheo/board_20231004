@@ -3,6 +3,8 @@ package com.example.board.controller;
 import com.example.board.dto.BoardDTO;
 import com.example.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,10 +46,16 @@ public class BoardController {
         boardService.deleteById(id);
         return "redirect:/board";
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteByAxios(@PathVariable("id") Long id){
+        boardService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") Long id, Model model){
         BoardDTO byId = boardService.findById(id);
         model.addAttribute("board", byId);
         return "boardPages/boardUpdate";
     }
+
 }

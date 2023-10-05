@@ -67,7 +67,15 @@
             if(type == "update"){
                 location.href = `/board/update/${id}`;
             }else if(type == "delete"){
-                location.href = `/board/delete/${id}`;
+                // location.href = `/board/delete/${id}`;
+                axios({
+                    method : "delete",
+                    url : `/board/${id}`,
+                }).then(res =>{
+                    location.href="/board";
+                }).catch(err =>{
+                    alert("삭제 실패");
+                })
             }
         }else{
             alert("비밀번호가 일치하지 않습니다.");
