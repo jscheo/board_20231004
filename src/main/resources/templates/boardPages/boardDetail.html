@@ -8,56 +8,86 @@
 <div th:replace="~{component/nav :: nav}"></div>
 
 <div class="container mt-5 mb-5">
-<h2>상세조회</h2>
-    <table>
+    <!-- 화면에 보여질 내용이 들어갈 부분 -->
+    <table class="table table-hover">
         <tr>
-            <th>아이디</th>
-            <th>글쓴이</th>
-            <th>제목</th>
-            <th>내용</th>
-            <th>조회수</th>
-            <th>수정</th>
-            <th>삭제</th>
+            <th>id</th>
+            <td th:text="${board.id}"></td>
         </tr>
         <tr>
-            <td th:text="${board.id}"></td>
-            <td th:text="${board.boardWriter}"></td>
+            <th>title</th>
             <td th:text="${board.boardTitle}"></td>
-            <td th:text="${board.boardContents}"></td>
+        </tr>
+        <tr>
+            <th>writer</th>
+            <td th:text="${board.boardWriter}"></td>
+        </tr>
+        <tr>
+            <th>date</th>
+            <td th:text="${board.createdAt}"></td>
+        </tr>
+        <tr>
+            <th>hits</th>
             <td th:text="${board.boardHits}"></td>
-            <td>
-                <button th:onclick="update_fn([[${board.id}]])">수정</button>
-            </td>
-            <td>
-                <button th:onclick="delete_fn([[${board.id}]])">삭제</button>
-            </td>
-            <td>
-                <input type="hidden" id="pass-check" style="display: none;">
-            </td>
+        </tr>
+        <tr>
+            <th>contents</th>
+            <td th:text="${board.boardContents}"></td>
         </tr>
     </table>
+    <div id="btn-area">
+        <button class="btn btn-primary" onclick="list_fn()">목록</button>
+        <!-- 수정 또는 삭제 버튼을 클릭하면 비밀번호를 입력하는 input 창이 노출되고
+            비밀번호 일치하면 수정페이지로 이동 또는 삭제처리를 진행함. -->
+        <button class="btn btn-warning" onclick="update_fn()">수정</button>
+        <button class="btn btn-danger" onclick="delete_fn()">삭제</button>
+    </div>
+
+    <div id="update-pass-check" style="display: none">
+        <input type="text" id="board-pass" placeholder="비밀번호">
+        <input type="button" onclick="update_pass_check()" value="확인">
+    </div>
+
+    <div id="delete-pass-check" style="display: none">
+        <input type="text" id="delete-board-pass" placeholder="비밀번호">
+        <input type="button" onclick="delete_pass_check()" value="확인">
+    </div>
 </div>
+
 <div th:replace="~{component/footer :: footer}"></div>
+
 </body>
 <script th:inline="javascript">
-    const update_fn = (id) =>{
-        const boardPass = [[${board.boardPass}]];
-        const inputPass = document.getElementById("pass-check").value;
-        if(inputPass.style.display == "none"){
-            inputPass.style.display = "block";
-            if(inputPass== boardPass){
-                location.href=`/board/update/${id}`;
-            }else{
-                alert("비밀번호가 틀립니다.")
-            }
-        }else{
-            inputPass.style.display="none";
-        }
-
+    const update_fn = () => {
+        const passCheckInput = document.getElementById("update-pass-check");
+        passCheckInput.style.display = "block";
     }
 
-    const delete_fn = (id) =>{
-        location.href=`/board/delete/${id}`;
+    const update_pass_check = () => {
+        const passInput = document.getElementById("board-pass").value;
+        const passDB = [[${board.boardPass}]];
+        const id = [[${board.id}]];
+        if (passInput == passDB) {
+            location.href = `/board/update/${id}`;
+        } else {
+            alert("비밀번호가 일치하지 않습니다!");
+        }
+    }
+
+    const delete_fn = () => {
+        const passCheckInput = document.getElementById("delete-pass-check");
+        passCheckInput.style.display = "block";
+    }
+
+    const delete_pass_check = () => {
+        const passInput = document.getElementById("delete-board-pass").value;
+        const passDB = [[${board.boardPass}]];
+        const id = [[${board.id}]];
+        if (passInput == passDB) {
+            location.href = `/board/delete/${id}`;
+        } else {
+            alert("비밀번호가 일치하지 않습니다!");
+        }
     }
 </script>
 </html>
