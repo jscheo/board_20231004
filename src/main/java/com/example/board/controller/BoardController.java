@@ -55,7 +55,18 @@ public class BoardController {
     public String updateForm(@PathVariable("id") Long id, Model model){
         BoardDTO byId = boardService.findById(id);
         model.addAttribute("board", byId);
-        return "boardPages/boardUpdate";
+        return "/boardPages/boardUpdate";
     }
 
+//    @PostMapping("/board/update")
+//    public String update(@ModelAttribute BoardDTO boardDTO){
+//        boardService.update(boardDTO);
+//        return "/boardPages/boardDetail";
+//    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity update(@RequestBody BoardDTO boardDTO){
+        boardService.update(boardDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
