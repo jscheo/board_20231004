@@ -3,7 +3,10 @@ package com.example.board.service;
 import com.example.board.dto.BoardDTO;
 import com.example.board.entity.BoardEntity;
 import com.example.board.repository.BoardRepository;
+import com.example.board.util.UtilClass;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,20 +26,25 @@ public class BoardService {
         return boardRepository.save(boardEntity).getId();
     }
 
-    public List<BoardDTO> findAll() {
+    public Page<BoardDTO> findAll(int page) {
         // findall 호출 시 정렬 하려는 조건을 설정해줄 수 있음
-        List<BoardEntity> boardEntityList = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
-        List<BoardDTO> boardDTOList = new ArrayList<>();
-        boardEntityList.forEach(board -> {
-            boardDTOList.add(BoardDTO.toSaveDTO(board));
-        });
-        // 괄호가 여러개있을때 괄호에 많이 쌓여져있는 부분부터 실행된다.
-
+                // 괄호가 여러개있을때 괄호에 많이 쌓여져있는 부분부터 실행된다.
 //        for(BoardEntity boardEntity : boardEntityList){
 //            BoardDTO boardDTO = BoardDTO.toSaveDTO(boardEntity);
 //            boardDTOList.add(boardDTO);
 //        }
-        return boardDTOList;
+        page = page -1;
+        int pageLimit = 5;
+        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<BoardDTO> boardList = boardEntities.map(boardEntity ->
+                BoardDTO.builder()
+                        .id(boardEntity.getId())
+                        .boardTitle(boardEntity.getBoardTitle())
+                        .boardWriter(boardEntity.getBoardWriter())
+                        .boardHits(boardEntity.getBoardHits())
+                        .createdAt(UtilClass.dateTimeFormat(boardEntity.getCreatedAt()))
+                        .build());
+        return boardList;
     }
     //조회수
 
