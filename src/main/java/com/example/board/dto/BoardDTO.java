@@ -1,6 +1,7 @@
 package com.example.board.dto;
 
 import com.example.board.entity.BoardEntity;
+import com.example.board.entity.BoardFileEntity;
 import com.example.board.util.UtilClass;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -24,10 +27,11 @@ public class BoardDTO {
     private String createdAt;
     private int boardHits;
 
-    private MultipartFile boardFile;
+    private List<MultipartFile> boardFile;
     private int fileAttached;
-    private String originalFileName;
-    private String storedFileName;
+    // 객체를 선언하지 않으면 .add 매서드를 사용할 수 없게 된다.
+    private List<String> originalFileName = new ArrayList<>();
+    private List<String> storedFileName = new ArrayList<>();
 
     public static BoardDTO toSaveDTO(BoardEntity boardEntity){
         BoardDTO boardDTO = new BoardDTO();
@@ -41,8 +45,10 @@ public class BoardDTO {
 
         // 파일 첨부 여부에 따라 파일이름 가져가기
         if(boardEntity.getFileAttached() == 1){
-            boardDTO.setOriginalFileName(boardEntity.getBoardFileEntityList().get(0).getOriginalFileName());
-            boardDTO.setStoredFileName(boardEntity.getBoardFileEntityList().get(0).getStoredFileName());
+           for(BoardFileEntity boardFileEntity : boardEntity.getBoardFileEntityList()){
+               boardDTO.getOriginalFileName().add(boardFileEntity.getOriginalFileName());
+               boardDTO.getStoredFileName().add(boardFileEntity.getStoredFileName());
+           }
             boardDTO.setFileAttached(1);
         }else{
             boardDTO.setFileAttached(0);
