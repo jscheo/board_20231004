@@ -34,6 +34,12 @@
             <th>contents</th>
             <td th:text="${board.boardContents}"></td>
         </tr>
+        <tr th:if="${board.fileAttached == 1}">
+            <th>image</th>
+            <td th:each="fileName: ${board.storedFileName}">
+                <img th:src="@{|/upload/${fileName}}" width="200" height="200" alt="">
+            </td>
+        </tr>
     </table>
     <div id="btn-area">
         <button class="btn btn-primary" onclick="list_fn()">목록</button>

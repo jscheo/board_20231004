@@ -103,6 +103,7 @@ public class BoardService {
         boardRepository.increaseHits(id);
     }
 
+    @Transactional
     public BoardDTO findById(Long id) {
         BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
         return BoardDTO.toSaveDTO(boardEntity);
