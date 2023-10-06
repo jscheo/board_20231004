@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -38,7 +39,11 @@ public class BoardTest {
     @DisplayName("게시글 데이터 붓기")
     public void boardInsert() {
         IntStream.rangeClosed(1, 50).forEach(i -> {
-            boardService.save(newBoard(i));
+            try {
+                boardService.save(newBoard(i));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 

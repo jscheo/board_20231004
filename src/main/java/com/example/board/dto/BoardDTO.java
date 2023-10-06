@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +23,11 @@ public class BoardDTO {
     private String boardContents;
     private String createdAt;
     private int boardHits;
+
+    private MultipartFile boardFile;
+    private int fileAttached;
+    private String originalFileName;
+    private String storedFileName;
 
     public static BoardDTO toSaveDTO(BoardEntity boardEntity){
         BoardDTO boardDTO = new BoardDTO();

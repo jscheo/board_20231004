@@ -53,32 +53,39 @@
 
 </body>
 <script th:inline="javascript">
-    const req_fn=(type)=>{
-        document.querySelector("#pass-check").innerHTML =
-            `<input type="text" id="board-pass" placeholder="비밀번호">
-        <input type="button" onclick="pass_check('${type}')" value="확인">`
+    const list_fn = () => {
+        const page = [[${page}]]
+        const type = [[${type}]]
+        const q = [[${q}]]
+        location.href = `/board?page=${page}&type=${type}&q=${q}`;
     }
 
-    const pass_check = (type) =>{
+    const req_fn = (type) => {
+        document.querySelector("#pass-check").innerHTML =
+            `<input type="text" id="board-pass" placeholder="비밀번호">
+                <input type="button" onclick="pass_check('${type}')" value="확인">`;
+    }
+
+    const pass_check = (type) => {
         const passInput = document.getElementById("board-pass").value;
         const passDB = [[${board.boardPass}]];
         const id = [[${board.id}]];
-        if(passInput == passDB){
-            if(type == "update"){
+        if (passInput == passDB) {
+            if (type == "update") {
                 location.href = `/board/update/${id}`;
-            }else if(type == "delete"){
+            } else if (type == "delete") {
                 // location.href = `/board/delete/${id}`;
                 axios({
-                    method : "delete",
-                    url : `/board/${id}`,
-                }).then(res =>{
-                    location.href="/board";
-                }).catch(err =>{
-                    alert("삭제 실패");
-                })
+                    method: "delete",
+                    url: `/board/${id}`
+                }).then(res => {
+                    location.href = "/board";
+                }).catch(err => {
+                    alert("삭제 실패!");
+                });
             }
-        }else{
-            alert("비밀번호가 일치하지 않습니다.");
+        } else {
+            alert("비밀번호가 일치하지 않습니다!");
         }
     }
 </script>
