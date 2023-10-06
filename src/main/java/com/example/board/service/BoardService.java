@@ -28,6 +28,7 @@ public class BoardService {
     private final BoardFileRepository boardFileRepository;
 
     public Long save(BoardDTO boardDTO) throws IOException {
+        // 리스트 객체이기 때문에 인덱스 번으로 비교해봐야함
         if (boardDTO.getBoardFile().get(0).isEmpty()) {
             // 첨부파일 없음
             BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);

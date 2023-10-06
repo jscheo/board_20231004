@@ -52,24 +52,70 @@
     <div id="pass-check" class="mt-3">
 
     </div>
+    <div>
+        <form action="/comment/save" method="post">
+            <input type="text" name="commentWriter" placeholder="작성자"><br>
+            <textarea name="commentContents" cols="30" rows="10" placeholder="내용입력"></textarea><br>
+            <input type="button" th:onclick="comment_fn([[${board.id}]])" value="등록">
+        </form>
+    </div>
+    <div id="comment-area">
 
+    </div>
 </div>
 
 <div th:replace="~{component/footer :: footer}"></div>
 
 </body>
 <script th:inline="javascript">
+    const comment_fn = (id) => {
+        const commentWriter = document.querySelector('[name =commentWriter]').value;
+        const commentContents = document.querySelector('[name=commentContents]').value;
+
+        axios({
+            method: "post",
+            url: `/comment/save/${id}`,
+            data: {
+                commentWriter: commentWriter,
+                commentContents: commentContents,
+            },
+        }).then(res => {
+            const commentArea = document.getElementById("comment-area");
+            let result = `
+                <table>
+                    <tr>
+                        <th>작성자</th>
+                        <th>내용</th>
+                    </tr>
+                    <tr>
+                        <td>${res.data.commentWriter} </td>
+                        <td>${res.data.commentContents}</td>
+                    </tr>
+                  </table>
+                `;
+            commentArea.innerHTML = result;
+        }).catch(err => {
+            console.log("바보");
+        });
+    }
+
     const list_fn = () => {
         const page = [[${page}]]
         const type = [[${type}]]
         const q = [[${q}]]
-        location.href = `/board?page=${page}&type=${type}&q=${q}`;
+        location.href = `/board?page=${page}&type=${type}&q =${q}`;
     }
 
     const req_fn = (type) => {
         document.querySelector("#pass-check").innerHTML =
-            `<input type="text" id="board-pass" placeholder="비밀번호">
-                <input type="button" onclick="pass_check('${type}')" value="확인">`;
+            ` < input
+            type = "text"
+            id = "board-pass"
+            placeholder = "비밀번호" >
+                < input
+            type = "button"
+            onclick = "pass_check('${type}')"
+            value = "확인" > `;
     }
 
     const pass_check = (type) => {
@@ -78,9 +124,9 @@
         const id = [[${board.id}]];
         if (passInput == passDB) {
             if (type == "update") {
-                location.href = `/board/update/${id}`;
+                location.href = ` / board / update /${id}`;
             } else if (type == "delete") {
-                // location.href = `/board/delete/${id}`;
+                // location.href = ` / board / delete /${id}`;
                 axios({
                     method: "delete",
                     url: `/board/${id}`
