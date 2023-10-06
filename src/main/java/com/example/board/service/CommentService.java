@@ -7,8 +7,11 @@ import com.example.board.repository.BoardRepository;
 import com.example.board.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -17,18 +20,20 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
-    public CommentDTO save(CommentDTO commentDTO, Long id) {
-        Optional<BoardEntity> byId = boardRepository.findById(id);
-        BoardEntity boardEntity = byId.get();
+    public Long save(CommentDTO commentDTO) {
+        BoardEntity boardEntity = boardRepository.findById(commentDTO.getBoardId()).orElseThrow(() -> new NoSuchElementException());
         CommentEntity commentEntity = CommentEntity.toSaveEntity(commentDTO, boardEntity);
-        CommentEntity saveComment = commentRepository.save(commentEntity);
-        return CommentDTO.toSaveDTO(saveComment);
+        return commentRepository.save(commentEntity).getId();
     }
 
-
-    public List<CommentDTO> findAll() {
-        List<CommentEntity> commentEntityList = commentRepository.findAll();
-        List<CommentDTO> commentDTOList = CommentDTO.toSaveDTOList(commentEntityList);
+    @Transactional
+    public List<CommentDTO> findAll(Long boardId) {
+        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow(() -> new NoSuchElementException());
+        List<CommentEntity> commentEntityList = commentRepository.findByBoardEntityOrderByIdDesc(boardEntity);
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+        commentEntityList.forEach(comment ->{
+            commentDTOList.add(CommentDTO.toSaveDTO(comment));
+        });
         return commentDTOList;
     }
 }

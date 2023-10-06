@@ -53,14 +53,30 @@
 
     </div>
     <div>
-        <form action="/comment/save" method="post">
-            <input type="text" name="commentWriter" placeholder="작성자"><br>
-            <textarea name="commentContents" cols="30" rows="10" placeholder="내용입력"></textarea><br>
-            <input type="button" th:onclick="comment_fn([[${board.id}]])" value="등록">
+        <form>
+            <input type="text" id="commentWriter" placeholder="작성자"><br>
+            <input type="text" id="commentContents" placeholder="내용"><br>
+            <input type="button" th:onclick="comment_fn()" value="등록">
         </form>
     </div>
-    <div id="comment-area">
-
+    <div class="container mt-5" id="comment-area">
+        <div th:if="${commentList == null}">
+            <p>작성된 댓글이 없습니다.</p>
+        </div>
+        <div th:unless="${commentList == null}">
+            <table class="table">
+                <tr>
+                    <th>writer</th>
+                    <th>contents</th>
+                    <th>date</th>
+                </tr>
+                <tr th:each="comment: ${commentList}">
+                    <td th:text="${comment.commentWriter}"></td>
+                    <td th:text="${comment.commentContents}"></td>
+                    <td th:text="${comment.createdAt}"></td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -68,34 +84,42 @@
 
 </body>
 <script th:inline="javascript">
-    const comment_fn = (id) => {
-        const commentWriter = document.querySelector('[name =commentWriter]').value;
-        const commentContents = document.querySelector('[name=commentContents]').value;
-
+    const comment_list =(commentList)=>{
+        const result =document.querySelector("#comment-area");
+        let output = "        <table class=\"table\">\n" +
+            "            <tr>\n" +
+            "                <th>writer</th>\n" +
+            "                <th>contents</th>\n" +
+            "                <th>date</th>\n" +
+            "            </tr>";
+        for (let i in commentList) {
+            output += "<tr>\n" +
+                "                <td>" + commentList[i].commentWriter + "</td>\n" +
+                "                <td>" + commentList[i].commentContents + "</td>\n" +
+                "                <td>" + commentList[i].createdAt + "</td>\n" +
+                "            </tr>";
+        }
+        output += "</table>";
+        result.innerHTML = output;
+    }
+    const comment_fn = () => {
+        const commentWriter = document.querySelector("#commentWriter").value;
+        const commentContents = document.querySelector("#commentContents").value;
+        const boardId = [[${board.id}]];
         axios({
             method: "post",
-            url: `/comment/save/${id}`,
+            url: "/comment/save",
             data: {
                 commentWriter: commentWriter,
                 commentContents: commentContents,
+                boardId : boardId
             },
         }).then(res => {
-            const commentArea = document.getElementById("comment-area");
-            let result = `
-                <table>
-                    <tr>
-                        <th>작성자</th>
-                        <th>내용</th>
-                    </tr>
-                    <tr>
-                        <td>${res.data.commentWriter} </td>
-                        <td>${res.data.commentContents}</td>
-                    </tr>
-                  </table>
-                `;
-            commentArea.innerHTML = result;
+            document.querySelector("#commentWriter").value ="";
+            document.querySelector("#commentContents").value ="";
+            comment_list(res.data);
         }).catch(err => {
-            console.log("바보");
+            console.log("err" + err);
         });
     }
 
@@ -108,14 +132,8 @@
 
     const req_fn = (type) => {
         document.querySelector("#pass-check").innerHTML =
-            ` < input
-            type = "text"
-            id = "board-pass"
-            placeholder = "비밀번호" >
-                < input
-            type = "button"
-            onclick = "pass_check('${type}')"
-            value = "확인" > `;
+            `<input type="text" id="board-pass" placeholder="비밀번호">
+                <input type="button" onclick="pass_check('${type}')" value="확인">`;
     }
 
     const pass_check = (type) => {

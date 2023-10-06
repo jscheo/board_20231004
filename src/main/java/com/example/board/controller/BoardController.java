@@ -1,7 +1,9 @@
 package com.example.board.controller;
 
 import com.example.board.dto.BoardDTO;
+import com.example.board.dto.CommentDTO;
 import com.example.board.service.BoardService;
+import com.example.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
+    private final CommentService commentService;
 
     @GetMapping("/save")
     public String save(){
@@ -67,12 +70,24 @@ public class BoardController {
                            @RequestParam(value = "type", required = false, defaultValue = "boardTitle") String type,
                            @RequestParam(value = "q", required = false, defaultValue = "") String q) {
         boardService.increaseHits(id);
-        BoardDTO boardDTO = boardService.findById(id);
-        model.addAttribute("board", boardDTO);
+
         model.addAttribute("page", page);
         model.addAttribute("type", type);
         model.addAttribute("q", q);
-        return "boardPages/boardDetail";
+        try{
+            BoardDTO boardDTO = boardService.findById(id);
+            model.addAttribute("board", boardDTO);
+            List<CommentDTO> commentDTOList = commentService.findAll(id);
+            if(commentDTOList.size() > 0){
+                model.addAttribute("commentList", commentDTOList);
+            }else{
+                model.addAttribute("commentList", null);
+            }
+            return "boardPages/boardDetail";
+        }catch (Exception e){
+            return "boardPages/boardNotFound";
+        }
+
     }
     @GetMapping("/delete/{id}")
     public String deleteById(@PathVariable("id") Long id){
